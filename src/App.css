@@ -64,7 +64,8 @@
 
 /* Buttons */
 .App__start-button,
-.App__restart-button {
+.App__restart-button,
+.App__sound-button {
   padding: 0.5em 3em;
   font-size: 1.2rem;
 
@@ -78,6 +79,11 @@
 
 .App__start-button {
   background: #6a1b9a;
+  color: white;
+}
+
+.App__sound-button {
+  background-color: #ff5722;
   color: white;
 }
 

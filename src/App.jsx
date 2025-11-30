@@ -7,6 +7,7 @@ function App() {
   const [totalTimer, setTotalTimer] = useState(0);
   const [exerciseTimer, setExerciseTimer] = useState(0);
   const [started, setStarted] = useState(false);
+  const [wantSound, setWantSound] = useState(false);
   const totalTimerRef = useRef(totalTimer);
   const exerciseTimerRef = useRef(exerciseTimer);
   const formRef = useRef();
@@ -21,7 +22,10 @@ function App() {
 
   function playSound(sound) {
     const audio = new Audio(sound);
-    audio.play();
+
+    if (wantSound) {
+      audio.play();
+    }
   }
 
   function handleStart(e) {
@@ -116,7 +120,16 @@ function App() {
             required
           />
 
-          <button className="App__start-button">Start</button>
+          <button type="submit" className="App__start-button">
+            Start
+          </button>
+          <button
+            type="button"
+            className="App__sound-button"
+            onClick={() => setWantSound((prevValue) => !prevValue)}
+          >
+            {wantSound ? "Sound on" : "Sound off"}
+          </button>
         </form>
       )}
     </div>
