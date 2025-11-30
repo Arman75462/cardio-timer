@@ -12,6 +12,9 @@ function App() {
   const exerciseTimerRef = useRef(exerciseTimer);
   const formRef = useRef();
 
+  const finishAudio = useRef(new Audio(finishSound));
+  const exerciseAudio = useRef(new Audio(exerciseChangeSound));
+
   useEffect(() => {
     totalTimerRef.current = totalTimer;
   }, [totalTimer]);
@@ -20,11 +23,12 @@ function App() {
     exerciseTimerRef.current = exerciseTimer;
   }, [exerciseTimer]);
 
-  function playSound(sound) {
-    const audio = new Audio(sound);
-
+  function playSound(audioRef) {
     if (wantSound) {
-      audio.play();
+      audioRef.current.currentTime = 0;
+      audioRef.current.play().catch((err) => {
+        console.log("Audio play blocked:", err);
+      });
     }
   }
 
