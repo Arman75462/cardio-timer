@@ -40,7 +40,7 @@ function App() {
       setTotalTimer((prev) => {
         // If total timer reached 0
         if (prev === 0) {
-          playSound(finishSound);
+          playSound(finishAudio);
           clearInterval(totalTimerIntervalId);
           clearInterval(exerciseTimerIntervalId);
           return 0;
@@ -55,7 +55,7 @@ function App() {
         setExerciseTimer((prev) => {
           // Exercise timer reached 0 -> reset it
           if (prev === 0) {
-            playSound(exerciseChangeSound);
+            playSound(exerciseAudio);
             return (exerciseTimerRef.current = exerciseTimer) - 1;
           }
 
