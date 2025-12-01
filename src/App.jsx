@@ -4,17 +4,44 @@ import finishSound from "./assets/finishSound.mp3";
 import exerciseChangeSound from "./assets/exerciseChangeSound.mp3";
 
 function App() {
+  // Timer states
   const [totalTimer, setTotalTimer] = useState(0);
   const [exerciseTimer, setExerciseTimer] = useState(0);
-  const [started, setStarted] = useState(false);
+  const [timerStarted, setTimerStarted] = useState(false);
   const [wantSound, setWantSound] = useState(false);
+
+  // Refs to hold current timer values for intervals
   const totalTimerRef = useRef(totalTimer);
   const exerciseTimerRef = useRef(exerciseTimer);
   const formRef = useRef();
 
+  // Preload audio once
   const finishAudio = useRef(new Audio(finishSound));
   const exerciseAudio = useRef(new Audio(exerciseChangeSound));
 
+  // Unlock audio on first user click (required for mobile browsers)
+  function unlockAudio() {
+    finishAudio.current.play().then(() => finishAudio.current.pause());
+    exerciseAudio.current.play().then(() => exerciseAudio.current.pause());
+    document.removeEventListener("click", unlockAudio);
+  }
+
+  useEffect(() => {
+    document.addEventListener("click", unlockAudio);
+    return () => document.removeEventListener("click", unlockAudio);
+  }, []);
+
+  // Play a sound if enabled
+  function playSound(audioRef) {
+    if (wantSound) {
+      audioRef.current.currentTime = 0;
+      audioRef.current
+        .play()
+        .catch((err) => console.log("Audio blocked:", err));
+    }
+  }
+
+  // Keep refs updated with current stat
   useEffect(() => {
     totalTimerRef.current = totalTimer;
   }, [totalTimer]);
@@ -23,18 +50,10 @@ function App() {
     exerciseTimerRef.current = exerciseTimer;
   }, [exerciseTimer]);
 
-  function playSound(audioRef) {
-    if (wantSound) {
-      audioRef.current.currentTime = 0;
-      audioRef.current.play().catch((err) => {
-        console.log("Audio play blocked:", err);
-      });
-    }
-  }
-
+  // Handle Start button click
   function handleStart(e) {
     e.preventDefault();
-    setStarted(true); // mark timer as started
+    setTimerStarted(true);
 
     const totalTimerIntervalId = setInterval(() => {
       setTotalTimer((prev) => {
@@ -68,15 +87,15 @@ function App() {
       else {
         clearInterval(exerciseTimerIntervalId);
         setExerciseTimer(0);
-        setStarted(false);
+        setTimerStarted(false);
       }
     }, 1000);
 
+    // Reset input form on timer start
     formRef.current.reset();
   }
 
-  /* When click start and total timer is still running set states to 0*/
-
+  // Timer display
   const totalTimerMinutes = Math.floor(totalTimer / 60);
   const totalTimerSeconds = totalTimer % 60;
 
@@ -92,11 +111,11 @@ function App() {
         </h2>
       </div>
 
-      {started ? (
+      {timerStarted ? (
         <button
           className="App__restart-button"
           onClick={() => {
-            setStarted(false);
+            setTimerStarted(false);
             setTotalTimer(0);
             setExerciseTimer(0);
           }}
